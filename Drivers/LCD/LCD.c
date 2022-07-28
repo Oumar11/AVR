@@ -1,5 +1,5 @@
 #include "LCD.h"
-#define  F_CPU 8000000UL 
+
 #include <util/delay.h>
 
 void LCD_init(void)
@@ -12,11 +12,12 @@ void LCD_init(void)
 	GPIO_pin_dir(LCD_PORT,5,1);
 	GPIO_pin_dir(LCD_PORT,6,1);
 	GPIO_pin_dir(LCD_PORT,7,1);
-	GPIO_pin_dir(EN_PORT,EN,1);//set EN pin to output pin
-	GPIO_pin_dir(RW_PORT,RW,1);//set RS pin to output pin
-	GPIO_pin_dir(RS_PORT,RS,1);//set RS pin to output pin
+
+	GPIO_pin_dir(EN_PORT,EN,1); //set EN pin to output pin
+	GPIO_pin_dir(RW_PORT,RW,1); //set RS pin to output pin
+	GPIO_pin_dir(RS_PORT,RS,1); //set RS pin to output pin
 	
-	GPIO_pin_w('B',RW,0);
+	GPIO_pin_w(RW_PORT,RW,0);
 
 	
 	LCD_send_command(RETURN_HOME);
@@ -32,6 +33,7 @@ void LCD_init(void)
 
 	#elif defined eight_bits_mode
 	//set connection pins:
+
 	GPIO_port_dir(LCD_PORT,1);
 	GPIO_pin_dir(EN_PORT,EN,1);//set EN pin to output pin
 	GPIO_pin_dir(RW_PORT,RW,1);//set RS pin to output pin
@@ -53,7 +55,7 @@ void LCD_init(void)
 }
 
 
-static void LCD_send_pulse(void)
+void LCD_Pulse(void)
 {
 	GPIO_pin_w(EN_PORT,EN,1);
 	_delay_ms(2);
@@ -64,18 +66,18 @@ void LCD_send_command(uint8 command)
 {
 	#if defined four_bits_mode
 	
-	GPIO_port_write_high_nibble(LCD_PORT,command>>4); //write_low_nipple because LCD is connected to low_nipple pins
-	GPIO_pin_w(RS_PORT,RS,0); //select command register
-	LCD_send_pulse();
-	GPIO_port_write_high_nibble(LCD_PORT,command); //write_low_nipple because LCD is connected to low_nipple pins
-	GPIO_pin_w(RS_PORT,RS,0); //select command register
-	LCD_send_pulse();
+	GPIO_port_write_high_nibble(LCD_PORT,command>>4); //write_high_nipple because LCD is connected to high_nipple pins
+	GPIO_pin_w(RS_PORT,RS,0);						  //select command register
+	LCD_Pulse();
+	GPIO_port_write_high_nibble(LCD_PORT,command); //write_high_nipple because LCD is connected to high_nipple pins
+	GPIO_pin_w(RS_PORT,RS,0);	 //select command register
+	LCD_Pulse();
 	
 	#elif defined eight_bits_mode
 	
 	GPIO_port_w(LCD_PORT,command);
 	GPIO_pin_w(RS_PORT,RS,0);
-	LCD_send_pulse();
+	LCD_Pulse();
 	
 	#endif
 	_delay_ms(1);
@@ -94,19 +96,19 @@ void LCD_send_character(char character)
 	#if defined four_bits_mode
 	
 	
-	GPIO_port_write_high_nibble('D',character>>4);
-	GPIO_pin_w('B',RS,1);
-	LCD_send_pulse();
-	GPIO_port_write_high_nibble('D',character);
-	GPIO_pin_w('B',RS,1);
+	GPIO_port_write_high_nibble(LCD_PORT,character>>4);
+	GPIO_pin_w(RS_PORT,RS,1);
+	LCD_Pulse();
 
-	LCD_send_pulse();
+	GPIO_port_write_high_nibble(LCD_PORT,character);
+	GPIO_pin_w(RS_PORT,RS,1);
+	LCD_Pulse();
 	
 	#elif defined eight_bits_mode
 	
 	GPIO_pin_w(RS_PORT,RS,1);
 	GPIO_port_w(LCD_PORT,character);
-	LCD_send_pulse();
+	LCD_Pulse();
 	
 	#endif
 		_delay_ms(1);

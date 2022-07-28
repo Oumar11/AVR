@@ -5,8 +5,8 @@
 
 
 #include <avr/io.h>
-#include "../std_macros.h"
-#include "../typedef.h"
+#include "std_macros.h"
+#include "typedef.h"
 
 
 

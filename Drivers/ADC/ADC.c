@@ -1,5 +1,6 @@
 #include "ADC.h"
 
+
 void ADC_init(void)
 {
 	 // This is Only for this project..

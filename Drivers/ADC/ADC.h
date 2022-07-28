@@ -1,14 +1,11 @@
-/*
- * ADC.h
- *
- * Created: 5/22/2022 7:36:04 PM
- *  Author: Mohamed Yasser
- */ 
+
 
 
 #ifndef ADC_H_
 #define ADC_H_
 
+#include "../std_macros"
+#include "../typedef"
 #include "GPIO.h"
 
 void ADC_init(void);
